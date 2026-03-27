@@ -1,0 +1,25 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import HeroScene from "../components/HeroScene";
+import EmpathyScene from "../components/EmpathyScene";
+import GlobalMapScene from "../components/GlobalMapScene";
+import FiveActsScene from "../components/FiveActsScene";
+import FinaleScene from "../components/FinaleScene";
+---
+
+<MainLayout>
+  {/* Scene 0: Hero — 黑暗降临 */}
+  <HeroScene client:load />
+
+  {/* Scene 1: 共情 — "如果灯灭了" */}
+  <EmpathyScene client:load />
+
+  {/* Scene 2: 全球停电地图 */}
+  <GlobalMapScene client:load />
+
+  {/* Scene 3-7: 五幕故事导览 */}
+  <FiveActsScene client:load />
+
+  {/* Scene 8: 尾声 — 回到光明 + Footer */}
+  <FinaleScene client:load />
+</MainLayout>

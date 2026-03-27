@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: #050508;
+    color: #f1f5f9;
+  }
+
+  body {
+    font-family: "Inter", "Noto Sans SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* 选中文字的颜色 */
+  ::selection {
+    background-color: rgba(245, 158, 11, 0.3);
+    color: #f1f5f9;
+  }
+
+  /* 滚动条定制 */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #050508;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+@layer components {
+  /* 事件卡片 */
+  .event-card {
+    @apply relative bg-deep-surface/80 backdrop-blur-md border border-white/5
+           rounded-lg overflow-hidden transition-all duration-300;
+  }
+  .event-card::before {
+    content: "";
+    @apply absolute left-0 top-0 bottom-0 w-[3px] bg-amber;
+    transition: box-shadow 0.3s ease;
+  }
+  .event-card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  }
+  .event-card:hover::before {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+  }
+
+  /* 交大暗线文字 */
+  .sjtu-whisper {
+    @apply text-sm tracking-wider;
+    color: #9e1a2f;
+    opacity: 0.7;
+  }
+
+  /* 数字高亮 */
+  .stat-number {
+    @apply font-mono text-5xl md:text-7xl font-bold text-amber;
+    text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+  }
+
+  /* 幕标题 */
+  .act-title {
+    @apply font-serif text-3xl md:text-5xl font-bold text-text-primary;
+  }
+
+  /* 玻璃容器 */
+  .glass-panel {
+    @apply bg-deep-surface/60 backdrop-blur-lg border border-white/10 rounded-xl;
+  }
+}
+
+@layer utilities {
+  /* 停电闪烁效果 */
+  .blackout-flicker {
+    animation: blackoutFlicker 0.1s steps(2) infinite;
+  }
+  @keyframes blackoutFlicker {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(0.6); }
+    100% { filter: brightness(0.9); }
+  }
+
+  /* 渐入动画（由GSAP控制，这里作为初始状态） */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .fade-in {
+    opacity: 0;
+  }
+}
