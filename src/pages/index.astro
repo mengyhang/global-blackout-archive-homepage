@@ -1,5 +1,7 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import IntroOverlay from "../components/IntroOverlay";
+import ScrollProgress from "../components/ScrollProgress";
 import HeroScene from "../components/HeroScene";
 import EmpathyScene from "../components/EmpathyScene";
 import GlobalMapScene from "../components/GlobalMapScene";
@@ -8,10 +10,19 @@ import FinaleScene from "../components/FinaleScene";
 ---
 
 <MainLayout>
-  {/* Scene 0: Hero — 黑暗降临 */}
+  {/* 入场引导层 — 第一眼看到的内容 */}
+  <IntroOverlay client:load />
+
+  {/* 滚动进度指示器 */}
+  <ScrollProgress client:load />
+
+  {/* 噪点纹理（全局覆盖，增加电影质感） */}
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  {/* Scene 0: Hero — 光点扩散 + Slogan */}
   <HeroScene client:load />
 
-  {/* Scene 1: 共情 — "如果灯灭了" */}
+  {/* Scene 1: 共情 — 停电体验 */}
   <EmpathyScene client:load />
 
   {/* Scene 2: 全球停电地图 */}
@@ -20,6 +31,6 @@ import FinaleScene from "../components/FinaleScene";
   {/* Scene 3-7: 五幕故事导览 */}
   <FiveActsScene client:load />
 
-  {/* Scene 8: 尾声 — 回到光明 + Footer */}
+  {/* Scene 8: 尾声 + Footer */}
   <FinaleScene client:load />
 </MainLayout>

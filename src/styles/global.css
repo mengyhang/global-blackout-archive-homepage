@@ -4,9 +4,10 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     background-color: #050508;
     color: #f1f5f9;
+    /* 禁用 smooth scroll — GSAP ScrollTrigger 自己控制 */
+    scroll-behavior: auto;
   }
 
   body {
@@ -16,88 +17,131 @@
     overflow-x: hidden;
   }
 
-  /* 选中文字的颜色 */
   ::selection {
-    background-color: rgba(245, 158, 11, 0.3);
+    background-color: rgba(245, 158, 11, 0.25);
     color: #f1f5f9;
   }
 
-  /* 滚动条定制 */
+  /* 滚动条 */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
   ::-webkit-scrollbar-track {
-    background: #050508;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 3px;
+    background: rgba(71, 85, 105, 0.4);
+    border-radius: 2px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: rgba(148, 163, 184, 0.5);
   }
 }
 
 @layer components {
-  /* 事件卡片 */
+  /* ====== 噪点纹理覆盖层 ====== */
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px;
+  }
+
+  /* ====== 场景过渡渐变 ====== */
+  .scene-fade-in {
+    position: relative;
+  }
+  .scene-fade-in::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, #050508, transparent);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* ====== 事件卡片 ====== */
   .event-card {
-    @apply relative bg-deep-surface/80 backdrop-blur-md border border-white/5
+    @apply relative bg-deep-surface/70 backdrop-blur-md border border-white/[0.04]
            rounded-lg overflow-hidden transition-all duration-300;
   }
   .event-card::before {
     content: "";
-    @apply absolute left-0 top-0 bottom-0 w-[3px] bg-amber;
-    transition: box-shadow 0.3s ease;
+    @apply absolute left-0 top-0 bottom-0 w-[2px];
+    background: linear-gradient(to bottom, transparent, #F59E0B, transparent);
+    transition: box-shadow 0.4s ease, opacity 0.4s ease;
+    opacity: 0.6;
   }
   .event-card:hover {
-    @apply -translate-y-1;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    @apply -translate-y-1.5;
+    border-color: rgba(245, 158, 11, 0.1);
+    box-shadow:
+      0 10px 40px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(245, 158, 11, 0.03);
   }
   .event-card:hover::before {
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+    opacity: 1;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
   }
 
-  /* 交大暗线文字 */
+  /* ====== 交大暗线 ====== */
   .sjtu-whisper {
-    @apply text-sm tracking-wider;
+    @apply text-sm tracking-[0.1em];
     color: #9e1a2f;
-    opacity: 0.7;
+    opacity: 0.6;
+    font-style: italic;
   }
 
-  /* 数字高亮 */
+  /* ====== 统计数字 ====== */
   .stat-number {
     @apply font-mono text-5xl md:text-7xl font-bold text-amber;
-    text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+    text-shadow: 0 0 40px rgba(245, 158, 11, 0.2);
+    letter-spacing: 0.05em;
   }
 
-  /* 幕标题 */
+  /* ====== 幕标题 ====== */
   .act-title {
     @apply font-serif text-3xl md:text-5xl font-bold text-text-primary;
+    letter-spacing: 0.06em;
   }
 
-  /* 玻璃容器 */
+  /* ====== 玻璃面板 ====== */
   .glass-panel {
-    @apply bg-deep-surface/60 backdrop-blur-lg border border-white/10 rounded-xl;
+    @apply bg-deep-surface/50 backdrop-blur-lg border border-white/[0.06] rounded-xl;
   }
 }
 
 @layer utilities {
-  /* 停电闪烁效果 */
-  .blackout-flicker {
-    animation: blackoutFlicker 0.1s steps(2) infinite;
+  /* 滚动指示器动画 */
+  @keyframes scrollLine {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(200%); }
   }
-  @keyframes blackoutFlicker {
-    0% { filter: brightness(1); }
-    50% { filter: brightness(0.6); }
-    100% { filter: brightness(0.9); }
+  .animate-scroll-line {
+    animation: scrollLine 2s ease-in-out infinite;
   }
 
-  /* 渐入动画（由GSAP控制，这里作为初始状态） */
+  /* 渐入 */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  /* 初始隐藏状态 */
   .fade-up {
     opacity: 0;
     transform: translateY(30px);
   }
-
   .fade-in {
     opacity: 0;
   }
