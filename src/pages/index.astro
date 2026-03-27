@@ -1,6 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import IntroOverlay from "../components/IntroOverlay";
+import ScrollRefresh from "../components/ScrollRefresh";
 import ScrollProgress from "../components/ScrollProgress";
 import HeroScene from "../components/HeroScene";
 import EmpathyScene from "../components/EmpathyScene";
@@ -10,16 +10,16 @@ import FinaleScene from "../components/FinaleScene";
 ---
 
 <MainLayout>
-  {/* 入场引导层 — 第一眼看到的内容 */}
-  <IntroOverlay client:load />
+  {/* 全局 ScrollTrigger 刷新（修复多 pin 排序） */}
+  <ScrollRefresh client:load />
 
   {/* 滚动进度指示器 */}
   <ScrollProgress client:load />
 
-  {/* 噪点纹理（全局覆盖，增加电影质感） */}
+  {/* 噪点纹理 */}
   <div class="noise-overlay" aria-hidden="true"></div>
 
-  {/* Scene 0: Hero — 光点扩散 + Slogan */}
+  {/* Scene 0: SJTU 献礼 + Hero 光点 + Slogan */}
   <HeroScene client:load />
 
   {/* Scene 1: 共情 — 停电体验 */}
