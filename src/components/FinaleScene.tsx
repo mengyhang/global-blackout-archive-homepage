@@ -164,7 +164,7 @@ export default function FinaleScene() {
           </div>
           <div className="archive-grid w-full max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {allEvents.map((event) => (
-              <a key={event.id} href={`/events/${event.slug}`}
+              <a key={event.id} href={`/events/${event.slug}/`}
                 className="archive-card group relative overflow-hidden rounded-lg bg-deep-surface/50 border border-white/[0.03] p-4 md:p-5 hover:border-amber/20 transition-all duration-300 opacity-0">
                 <div className="absolute inset-0 bg-amber/0 group-hover:bg-amber/[0.03] transition-colors duration-300" />
                 <div className="relative z-10">

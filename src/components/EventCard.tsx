@@ -15,7 +15,7 @@ export default function EventCard({ event, className = "" }: Props) {
 
   return (
     <a
-      href={`/events/${event.slug}`}
+      href={`/events/${event.slug}/`}
       className={`event-card group block p-6 md:p-7 ${is2025 ? "animate-glow-pulse" : ""} ${className}`}
     >
       {/* 网格纹理 — hover 时微现 */}

@@ -23,7 +23,7 @@ Thumbs.db
 
 # Project docs (not for repo)
 TECH_STACK.md
-docs/
+/docs/
 
 # Astro
 .astro/
