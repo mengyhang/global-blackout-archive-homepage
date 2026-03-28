@@ -18,8 +18,7 @@
 | UI 组件 | **React** | 交互组件开发 |
 | 样式 | **Tailwind CSS** | 原子化 CSS，自由定制视觉设计 |
 | 动画/叙事 | **GSAP + ScrollTrigger** | 滚动驱动叙事，全屏逐幕切换 |
-| 数据可视化 | **ECharts** | 图表与统计分析 |
-| 地理可视化 | **Mapbox GL JS** | 全球停电事件地图呈现 |
+| 地理可视化 | **Natural Earth + SVG** | 真实海岸线数据，太平洋居中投影 |
 
 ## 快速开始
 
@@ -52,15 +51,17 @@ src/
 ├── components/
 │   ├── HeroScene.tsx        # 入场引导（SJTU献礼）+ 光点粒子 + Slogan
 │   ├── EmpathyScene.tsx     # 停电共情体验（灯光闪烁 → 屏幕变暗 → 统计数字）
-│   ├── GlobalMapScene.tsx   # 全球停电地图（SVG世界地图 + 时间轴）
+│   ├── GlobalMapScene.tsx   # 全球停电地图（Natural Earth 海岸线 + 时间轴）
 │   ├── FiveActsScene.tsx    # 五幕故事导览容器
 │   ├── ActSection.tsx       # 单幕组件（全屏 pin + scrub 滚动驱动）
-│   ├── EventCard.tsx        # 停电事件卡片
+│   ├── EventCard.tsx        # 停电事件卡片（档案风格）
 │   ├── FinaleScene.tsx      # 尾声（光明回归 + 校庆收束 + 档案入口）
+│   ├── AmbientParticles.tsx # 全局浮动光粒子（场景自适应亮度）
 │   ├── ScrollProgress.tsx   # 右侧滚动进度指示器
 │   └── ScrollRefresh.tsx    # ScrollTrigger 多 pin 位置校准器
 ├── data/
-│   └── blackouts.ts         # 13 次停电事件数据 + 五幕定义
+│   ├── blackouts.ts         # 13 次停电事件数据 + 五幕定义
+│   └── worldCoastline.ts    # 简化世界海岸线 SVG 路径（备用）
 ├── layouts/
 │   └── MainLayout.astro     # 基础 HTML 布局
 ├── pages/
