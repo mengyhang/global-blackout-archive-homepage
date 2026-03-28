@@ -79,6 +79,18 @@
     transition: box-shadow 0.4s ease, opacity 0.4s ease;
     opacity: 0.6;
   }
+  .event-card::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 30%;
+    background: linear-gradient(to bottom, transparent, #F59E0B, transparent);
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0.3s;
+  }
   .event-card:hover {
     @apply -translate-y-1.5;
     border-color: rgba(245, 158, 11, 0.1);
@@ -89,6 +101,10 @@
   .event-card:hover::before {
     opacity: 1;
     box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+  }
+  .event-card:hover::after {
+    opacity: 1;
+    animation: electricPulse 1s ease-in-out infinite;
   }
 
   /* ====== 交大暗线 ====== */
@@ -144,5 +160,26 @@
   }
   .fade-in {
     opacity: 0;
+  }
+
+  /* 电脉冲动画 */
+  @keyframes electricPulse {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(400%); }
+  }
+
+  /* 光扫动画 */
+  @keyframes lightSweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  /* 光环旋转动画 */
+  @keyframes rotateHalo {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .animate-rotate-halo {
+    animation: rotateHalo 8s linear infinite;
   }
 }

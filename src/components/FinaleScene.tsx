@@ -42,9 +42,39 @@ export default function FinaleScene() {
       const sB = container.querySelector(".finale-b") as HTMLElement;
       if (sB) {
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: sB, start: "top top", end: "+=250%", scrub: 1.5, pin: true, pinSpacing: true },
+          scrollTrigger: {
+            trigger: sB,
+            start: "top top",
+            end: "+=250%",
+            scrub: 1.5,
+            pin: true,
+            pinSpacing: true,
+            onUpdate: (self) => {
+              if (self.progress > 0.35 && self.progress < 0.75) {
+                const usEl = sB.querySelector(".fb-us2");
+                if (usEl) {
+                  const rect = usEl.getBoundingClientRect();
+                  window.dispatchEvent(new CustomEvent("ambient-scene", {
+                    detail: {
+                      converge: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+                      brightness: 0.9,
+                      targetCount: 50,
+                    },
+                  }));
+                }
+              } else {
+                window.dispatchEvent(new CustomEvent("ambient-scene", {
+                  detail: { converge: null },
+                }));
+              }
+            },
+          },
         });
-        tl.fromTo(sB.querySelector(".fb-badge"), { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.07 }, 0.02);
+        tl.fromTo(sB.querySelector(".fb-badge"),
+          { opacity: 0, scale: 0.92, filter: "blur(8px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.10 },
+          0.02
+        );
         const texts = sB.querySelectorAll(".fb-text");
         texts.forEach((el, i) => {
           tl.fromTo(el, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.07 }, 0.08 + i * 0.05);
@@ -101,10 +131,16 @@ export default function FinaleScene() {
           style={{ background: "radial-gradient(ellipse at 50% 60%, rgba(158,26,47,0.03) 0%, transparent 50%)" }} />
         <div className="fb-content h-full w-full flex items-center justify-center px-6">
           <div className="text-center max-w-3xl">
-            <div className="fb-badge mb-12 inline-flex items-center gap-3 px-6 py-2.5 rounded-full border border-sjtu-red/30 bg-sjtu-red/[0.03] opacity-0">
-              <div className="w-1.5 h-1.5 rounded-full bg-sjtu-red/60" />
-              <span className="font-serif text-[13px] tracking-[0.25em] text-sjtu-red/80">上海交通大学 · 建校130周年</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-sjtu-red/60" />
+            <div className="relative inline-block mb-12">
+              <div className="absolute -inset-3 rounded-full animate-rotate-halo opacity-20"
+                style={{
+                  background: "conic-gradient(from 0deg, transparent, rgba(158,26,47,0.3), transparent, rgba(245,158,11,0.2), transparent)",
+                }} />
+              <div className="fb-badge relative inline-flex items-center gap-3 px-6 py-2.5 rounded-full border border-sjtu-red/30 bg-sjtu-red/[0.03] opacity-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-sjtu-red/60" />
+                <span className="font-serif text-[13px] tracking-[0.25em] text-sjtu-red/80">上海交通大学 · 建校130周年</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-sjtu-red/60" />
+              </div>
             </div>
             <div className="space-y-2">
               <p className="fb-text font-serif text-xl md:text-2xl lg:text-3xl text-text-primary/70 leading-relaxed opacity-0">

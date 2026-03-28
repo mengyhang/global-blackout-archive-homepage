@@ -7,24 +7,114 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Scene 2: 全球停电地图 — 60年的黑暗版图
- * 滚动驱动事件按时间顺序脉冲亮起，结尾淡出过渡到五幕
+ *
+ * - 使用 Natural Earth 110m 真实地图数据（运行时从 CDN 加载）
+ * - 太平洋居中投影（东方习惯，美洲在右侧）
+ * - 等距圆柱投影
  */
 
+// 太平洋居中：中心经度 150°E，左边界 -30°(30°W)
+const CENTER_LNG = 150;
+
 function geoToSvg(lng: number, lat: number, w: number, h: number): [number, number] {
-  const x = ((lng + 180) / 360) * w;
-  const latRad = (lat * Math.PI) / 180;
-  const mercN = Math.log(Math.tan(Math.PI / 4 + latRad / 2));
-  const y = h / 2 - (mercN / Math.PI) * (h / 2);
+  // 将经度偏移到以150°E为中心
+  const shifted = ((lng + 30 + 360) % 360);
+  const x = (shifted / 360) * w;
+  const y = ((90 - lat) / 180) * h;
   return [x, y];
 }
 
 const sortedEvents = [...blackoutEvents].sort((a, b) => a.year - b.year);
 
+/** 将 GeoJSON Polygon/MultiPolygon 的坐标环转换为 SVG path */
+function ringToPath(ring: number[][], w: number, h: number): string {
+  let d = "";
+  for (let i = 0; i < ring.length; i++) {
+    const [lng, lat] = ring[i];
+    const [x, y] = geoToSvg(lng, lat, w, h);
+    d += i === 0 ? `M${x.toFixed(1)},${y.toFixed(1)}` : `L${x.toFixed(1)},${y.toFixed(1)}`;
+  }
+  return d + "Z";
+}
+
 export default function GlobalMapScene() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [phase, setPhase] = useState<"map" | "outro" | "exit">("map");
+  const [landPaths, setLandPaths] = useState<string[]>([]);
 
+  // 加载 Natural Earth 地图数据
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadMap() {
+      try {
+        // 使用 CDN 上的 Natural Earth 110m 数据
+        const res = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json");
+        const topo = await res.json();
+
+        // 手动解析 TopoJSON → GeoJSON coordinates
+        const land = topo.objects.land;
+        const arcs: number[][][] = [];
+        const { scale, translate } = topo.transform;
+
+        // 解码 arcs（delta-encoded）
+        for (const arc of topo.arcs) {
+          const decoded: number[][] = [];
+          let x = 0, y = 0;
+          for (const [dx, dy] of arc) {
+            x += dx;
+            y += dy;
+            decoded.push([
+              x * scale[0] + translate[0],
+              y * scale[1] + translate[1],
+            ]);
+          }
+          arcs.push(decoded);
+        }
+
+        // 从 arc 索引构建坐标环
+        function resolveRing(indices: number[]): number[][] {
+          const coords: number[][] = [];
+          for (const idx of indices) {
+            const arc = idx >= 0 ? arcs[idx] : [...arcs[~idx]].reverse();
+            for (let i = coords.length > 0 ? 1 : 0; i < arc.length; i++) {
+              coords.push(arc[i]);
+            }
+          }
+          return coords;
+        }
+
+        const paths: string[] = [];
+        const svgW = 1000, svgH = 500;
+
+        for (const geom of land.geometries) {
+          if (geom.type === "Polygon") {
+            for (const ring of geom.arcs) {
+              const coords = resolveRing(ring);
+              if (coords.length > 3) paths.push(ringToPath(coords, svgW, svgH));
+            }
+          } else if (geom.type === "MultiPolygon") {
+            for (const polygon of geom.arcs) {
+              for (const ring of polygon) {
+                const coords = resolveRing(ring);
+                if (coords.length > 3) paths.push(ringToPath(coords, svgW, svgH));
+              }
+            }
+          }
+        }
+
+        if (!cancelled) setLandPaths(paths);
+      } catch (e) {
+        console.warn("Failed to load world map data:", e);
+      }
+    }
+
+    loadMap();
+    return () => { cancelled = true; };
+  }, []);
+
+  // ScrollTrigger
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -39,36 +129,29 @@ export default function GlobalMapScene() {
         pinSpacing: true,
         onUpdate: (self) => {
           const p = self.progress;
-
           if (p < 0.65) {
-            // 事件依次激活
             setPhase("map");
             const eventProgress = p / 0.65;
             const idx = Math.floor(eventProgress * sortedEvents.length) - 1;
             setActiveIndex(Math.min(idx, sortedEvents.length - 1));
           } else if (p < 0.85) {
-            // 结尾文字
             setPhase("outro");
           } else {
-            // 淡出退场
             setPhase("exit");
           }
         },
       });
 
-      // 结尾文字动画
       gsap.fromTo(
         container.querySelector(".map-outro-text"),
         { opacity: 0, y: 20 },
         {
-          opacity: 1,
-          y: 0,
+          opacity: 1, y: 0,
           scrollTrigger: {
             trigger: container,
             start: "top top",
             end: "+=400%",
             scrub: 1.5,
-            // 在 65%-80% 范围内渐入
             onUpdate: (self) => {
               const el = container.querySelector<HTMLElement>(".map-outro-text");
               if (!el) return;
@@ -115,6 +198,13 @@ export default function GlobalMapScene() {
                 <stop offset="0%" stopColor="rgba(59,130,246,0.03)" />
                 <stop offset="100%" stopColor="transparent" />
               </radialGradient>
+              <filter id="coastline-glow" x="-5%" y="-5%" width="110%" height="110%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
             </defs>
 
             <rect width={svgW} height={svgH} fill="#080c14" rx="6" />
@@ -123,12 +213,37 @@ export default function GlobalMapScene() {
             {/* 网格线 */}
             {Array.from({ length: 7 }, (_, i) => (
               <line key={`h${i}`} x1={0} y1={(svgH / 6) * i} x2={svgW} y2={(svgH / 6) * i}
-                stroke="rgba(59,130,246,0.05)" strokeWidth="0.5" strokeDasharray="4 8" />
+                stroke="rgba(59,130,246,0.04)" strokeWidth="0.5" strokeDasharray="4 8" />
             ))}
             {Array.from({ length: 13 }, (_, i) => (
               <line key={`v${i}`} x1={(svgW / 12) * i} y1={0} x2={(svgW / 12) * i} y2={svgH}
-                stroke="rgba(59,130,246,0.05)" strokeWidth="0.5" strokeDasharray="4 8" />
+                stroke="rgba(59,130,246,0.04)" strokeWidth="0.5" strokeDasharray="4 8" />
             ))}
+
+            {/* 真实海岸线（Natural Earth 数据） */}
+            {landPaths.length > 0 && (
+              <g filter="url(#coastline-glow)">
+                {landPaths.map((d, i) => (
+                  <path key={i} d={d}
+                    fill="rgba(59,130,246,0.03)"
+                    stroke="rgba(59,130,246,0.12)"
+                    strokeWidth="0.6"
+                    strokeLinejoin="round" />
+                ))}
+              </g>
+            )}
+
+            {/* 已激活事件连线 */}
+            {sortedEvents.map((event, idx) => {
+              if (idx === 0 || idx > activeIndex) return null;
+              const prev = sortedEvents[idx - 1];
+              const [x1, y1] = geoToSvg(prev.coordinates[0], prev.coordinates[1], svgW, svgH);
+              const [x2, y2] = geoToSvg(event.coordinates[0], event.coordinates[1], svgW, svgH);
+              return (
+                <line key={`link-${idx}`} x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke="rgba(245,158,11,0.06)" strokeWidth="0.5" strokeDasharray="3 6" />
+              );
+            })}
 
             {/* 事件标记 */}
             {sortedEvents.map((event, idx) => {
@@ -138,23 +253,19 @@ export default function GlobalMapScene() {
 
               return (
                 <g key={event.id}>
-                  {/* 涟漪 */}
                   {isCurrent && (
                     <>
-                      <circle cx={cx} cy={cy} r="3" fill="none" stroke="#F59E0B" strokeWidth="0.8">
-                        <animate attributeName="r" from="3" to="30" dur="2s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" from="0.6" to="0" dur="2s" repeatCount="indefinite" />
+                      <circle cx={cx} cy={cy} r="3" fill="none" stroke="#F59E0B" strokeWidth="1">
+                        <animate attributeName="r" from="3" to="20" dur="1.2s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" from="0.6" to="0" dur="1.2s" repeatCount="indefinite" />
                       </circle>
-                      <circle cx={cx} cy={cy} r="3" fill="none" stroke="#F59E0B" strokeWidth="0.4">
-                        <animate attributeName="r" from="3" to="45" dur="2.5s" repeatCount="indefinite" />
+                      <circle cx={cx} cy={cy} r="3" fill="none" stroke="#EF4444" strokeWidth="0.5">
+                        <animate attributeName="r" from="3" to="40" dur="2.5s" repeatCount="indefinite" />
                         <animate attributeName="opacity" from="0.3" to="0" dur="2.5s" repeatCount="indefinite" />
                       </circle>
                     </>
                   )}
-
-                  {/* 点 */}
-                  <circle
-                    cx={cx} cy={cy}
+                  <circle cx={cx} cy={cy}
                     r={isCurrent ? 4.5 : isActive ? 3 : 1.5}
                     fill={isCurrent ? "#F59E0B" : isActive ? "#EF4444" : "rgba(71,85,105,0.2)"}
                     style={{
@@ -162,8 +273,6 @@ export default function GlobalMapScene() {
                       filter: isActive ? `drop-shadow(0 0 ${isCurrent ? 10 : 4}px rgba(${isCurrent ? "245,158,11" : "239,68,68"},0.5))` : "none",
                     }}
                   />
-
-                  {/* 年份 */}
                   {isActive && (
                     <text x={cx} y={cy - 12} textAnchor="middle" fill={isCurrent ? "#F1F5F9" : "#94A3B8"}
                       fontSize="7" fontFamily="JetBrains Mono, monospace" opacity={isCurrent ? 0.9 : 0.3}>
@@ -194,12 +303,10 @@ export default function GlobalMapScene() {
           )}
         </div>
 
-        {/* 结尾过渡文字 */}
+        {/* 结尾文字 */}
         <div className="map-outro-text absolute inset-0 z-30 flex items-center justify-center pointer-events-none" style={{ opacity: 0 }}>
           <div className="text-center">
-            <p className="font-serif text-xl md:text-3xl text-text-primary/80">
-              每一个光点
-            </p>
+            <p className="font-serif text-xl md:text-3xl text-text-primary/80">每一个光点</p>
             <p className="font-serif text-xl md:text-3xl text-text-primary/80 mt-2">
               都是一段<span className="text-amber">黑暗</span>的记忆
             </p>
@@ -209,7 +316,6 @@ export default function GlobalMapScene() {
         {/* 底部时间轴 */}
         <div className="absolute bottom-10 left-10 right-10 z-10">
           <div className="relative h-px bg-text-tertiary/10 rounded-full overflow-visible">
-            {/* 进度条 */}
             <div
               className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber/50 to-amber/20 transition-all duration-500"
               style={{
@@ -220,12 +326,10 @@ export default function GlobalMapScene() {
               const pos = ((event.year - 1965) / (2025 - 1965)) * 100;
               const isActive = idx <= activeIndex;
               return (
-                <div
-                  key={event.id}
+                <div key={event.id}
                   className="absolute -top-[3px] w-[6px] h-[6px] rounded-full transition-all duration-500"
                   style={{
-                    left: `${pos}%`,
-                    transform: "translateX(-50%)",
+                    left: `${pos}%`, transform: "translateX(-50%)",
                     backgroundColor: isActive ? "#F59E0B" : "rgba(71,85,105,0.3)",
                     boxShadow: isActive ? "0 0 6px rgba(245,158,11,0.4)" : "none",
                   }}

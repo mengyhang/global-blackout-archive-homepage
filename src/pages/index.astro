@@ -7,6 +7,7 @@ import EmpathyScene from "../components/EmpathyScene";
 import GlobalMapScene from "../components/GlobalMapScene";
 import FiveActsScene from "../components/FiveActsScene";
 import FinaleScene from "../components/FinaleScene";
+import AmbientParticles from "../components/AmbientParticles";
 ---
 
 <MainLayout>
@@ -15,6 +16,9 @@ import FinaleScene from "../components/FinaleScene";
 
   {/* 滚动进度指示器 */}
   <ScrollProgress client:load />
+
+  {/* 环境浮粒 */}
+  <AmbientParticles client:load />
 
   {/* 噪点纹理 */}
   <div class="noise-overlay" aria-hidden="true"></div>

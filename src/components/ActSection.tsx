@@ -85,8 +85,15 @@ export default function ActSection({ actInfo }: Props) {
         tl.fromTo(sjtuText, { opacity: 0, y: 8 }, { opacity: 0.6, y: 0, duration: 0.05 }, 0.65);
       }
 
-      // ---- 退场 (0.78 - 0.95) ----
-      tl.to(content, { opacity: 0, y: -20, duration: 0.15, ease: "power2.in" }, 0.80);
+      // ---- 光线扫过 + 退场 (0.76 - 0.95) ----
+      const sweep = content.querySelector(".light-sweep");
+      const sweepBar = sweep?.querySelector("div");
+      if (sweep && sweepBar) {
+        tl.to(sweep, { opacity: 1, duration: 0.02 }, 0.76);
+        tl.fromTo(sweepBar, { x: "-100%" }, { x: "300%", duration: 0.12, ease: "power2.inOut" }, 0.76);
+        tl.to(sweep, { opacity: 0, duration: 0.02 }, 0.90);
+      }
+      tl.to(content, { opacity: 0, y: -20, duration: 0.12, ease: "power2.in" }, 0.82);
     }, section);
 
     return () => ctx.revert();
@@ -99,7 +106,15 @@ export default function ActSection({ actInfo }: Props) {
     >
       <ActBackground act={actInfo.act} />
 
-      <div className="act-content h-full w-full flex flex-col items-center justify-center px-6 py-12 md:py-16">
+      <div className="act-content h-full w-full flex flex-col items-center justify-center px-6 py-12 md:py-16 relative">
+        {/* 光线扫过效果（退场时触发） */}
+        <div className="light-sweep absolute inset-0 z-20 pointer-events-none overflow-hidden opacity-0">
+          <div className="absolute inset-y-0 w-1/3"
+            style={{
+              background: "linear-gradient(90deg, transparent, rgba(245,158,11,0.06), transparent)",
+              transform: "translateX(-100%)",
+            }} />
+        </div>
         {/* 幕序号 */}
         <div className="act-number relative z-10 flex items-center gap-4 mb-6 opacity-0 origin-center">
           <div className="h-px w-8 bg-amber/30" />
