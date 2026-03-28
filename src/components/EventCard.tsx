@@ -32,34 +32,34 @@ export default function EventCard({ event, className = "" }: Props) {
       <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-amber/20 to-transparent" />
 
       {/* 案号 */}
-      <div className="font-mono text-[9px] text-text-tertiary/25 mb-2 tracking-[0.12em]">
+      <div className="font-mono text-[10px] text-text-tertiary/30 mb-2 tracking-[0.12em]">
         {caseNumber}
       </div>
 
       {/* 年份 */}
-      <div className="font-mono text-amber/60 text-[11px] tracking-[0.15em] mb-3">
+      <div className="font-mono text-amber/70 text-xs tracking-[0.15em] mb-3">
         {event.year}.{event.date.split("-")[1]}.{event.date.split("-")[2]}
       </div>
 
       {/* 事件名 */}
-      <h3 className="font-serif text-lg md:text-xl text-text-primary/90 mb-3 group-hover:text-amber transition-colors duration-300 leading-snug">
+      <h3 className="font-serif text-lg md:text-xl text-text-primary mb-3 group-hover:text-amber transition-colors duration-300 leading-snug">
         {event.nameCn}
       </h3>
 
       {/* 钩子 */}
-      <p className="text-text-secondary/60 text-sm leading-relaxed italic">
+      <p className="text-text-secondary/70 text-sm leading-relaxed italic">
         "{event.hook}"
       </p>
 
       {/* 底部信息 */}
-      <div className="mt-5 pt-4 border-t border-white/[0.04] flex items-center gap-3 text-[11px] text-text-tertiary/60">
+      <div className="mt-5 pt-4 border-t border-white/[0.06] flex items-center gap-3 text-xs text-text-tertiary/50">
         <span>{event.location}</span>
-        <span className="w-px h-3 bg-white/[0.06]" />
+        <span className="w-px h-3 bg-white/[0.08]" />
         <span>{event.affectedPeople}</span>
       </div>
 
       {/* hover 探索提示 */}
-      <div className="mt-3 flex items-center gap-1.5 text-amber/0 group-hover:text-amber/60 transition-all duration-300 text-[11px] tracking-[0.1em]">
+      <div className="mt-3 flex items-center gap-1.5 text-amber/0 group-hover:text-amber/70 transition-all duration-300 text-xs tracking-[0.1em]">
         <span>探索档案</span>
         <svg className="w-3 h-3 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

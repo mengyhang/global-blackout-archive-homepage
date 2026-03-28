@@ -14,27 +14,42 @@ gsap.registerPlugin(ScrollTrigger);
  */
 
 // 太平洋居中：中心经度 150°E，左边界 -30°(30°W)
-const CENTER_LNG = 150;
+// 纬度范围限制：-70° 到 82°，避免极地过度拉伸
+// 纬度映射范围：82°N 到 78°S，超出部分被 SVG viewBox 自然裁剪（不 clamp，避免水平线）
+const LAT_MAX = 82;
+const LAT_MIN = -78;
 
 function geoToSvg(lng: number, lat: number, w: number, h: number): [number, number] {
-  // 将经度偏移到以150°E为中心
   const shifted = ((lng + 30 + 360) % 360);
   const x = (shifted / 360) * w;
-  const y = ((90 - lat) / 180) * h;
+  // 不 clamp —— 超出范围的点自然落在 viewBox 之外，由 SVG 裁剪
+  const y = ((LAT_MAX - lat) / (LAT_MAX - LAT_MIN)) * h;
   return [x, y];
 }
 
 const sortedEvents = [...blackoutEvents].sort((a, b) => a.year - b.year);
 
-/** 将 GeoJSON Polygon/MultiPolygon 的坐标环转换为 SVG path */
+/** 将 GeoJSON 坐标环转换为 SVG path，自动在反经线处断开避免横穿伪影 */
 function ringToPath(ring: number[][], w: number, h: number): string {
   let d = "";
+  let prevX = -1;
   for (let i = 0; i < ring.length; i++) {
     const [lng, lat] = ring[i];
     const [x, y] = geoToSvg(lng, lat, w, h);
-    d += i === 0 ? `M${x.toFixed(1)},${y.toFixed(1)}` : `L${x.toFixed(1)},${y.toFixed(1)}`;
+    if (i === 0) {
+      d += `M${x.toFixed(1)},${y.toFixed(1)}`;
+    } else {
+      // 如果 x 坐标跳跃超过地图宽度的 40%，说明跨越了反经线，断开路径
+      const jump = Math.abs(x - prevX);
+      if (jump > w * 0.4) {
+        d += `M${x.toFixed(1)},${y.toFixed(1)}`;
+      } else {
+        d += `L${x.toFixed(1)},${y.toFixed(1)}`;
+      }
+    }
+    prevX = x;
   }
-  return d + "Z";
+  return d;
 }
 
 export default function GlobalMapScene() {
@@ -173,28 +188,21 @@ export default function GlobalMapScene() {
         style={{ opacity: isExiting ? 0 : 1 }}
       >
         {/* 标题 */}
-        <h2 className="absolute top-10 left-1/2 -translate-x-1/2 z-10">
-          <span className="font-mono text-amber/40 text-xs tracking-[0.3em]">1965 — 2025</span>
-          <span className="block font-serif text-lg md:text-xl text-text-secondary/50 tracking-[0.15em] mt-1 text-center">
+        <h2 className="absolute top-8 left-1/2 -translate-x-1/2 z-10">
+          <span className="font-mono text-amber/50 text-xs tracking-[0.3em]">1965 — 2025</span>
+          <span className="block font-serif text-lg md:text-xl text-text-secondary/60 tracking-[0.15em] mt-1 text-center">
             黑暗版图
           </span>
         </h2>
 
-        {/* SVG 地图 */}
-        <div className="relative w-full max-w-5xl mx-auto px-4">
+        {/* SVG 地图 — 放大到接近全宽 */}
+        <div className="relative w-full max-w-7xl mx-auto px-2">
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-auto">
             <defs>
               <radialGradient id="map-bg-glow">
                 <stop offset="0%" stopColor="rgba(59,130,246,0.03)" />
                 <stop offset="100%" stopColor="transparent" />
               </radialGradient>
-              <filter id="coastline-glow" x="-5%" y="-5%" width="110%" height="110%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
             </defs>
 
             <rect width={svgW} height={svgH} fill="#080c14" rx="6" />
@@ -212,12 +220,12 @@ export default function GlobalMapScene() {
 
             {/* 真实海岸线（Natural Earth 数据） */}
             {landPaths.length > 0 && (
-              <g filter="url(#coastline-glow)">
+              <g>
                 {landPaths.map((d, i) => (
                   <path key={i} d={d}
-                    fill="rgba(59,130,246,0.03)"
+                    fill="none"
                     stroke="rgba(59,130,246,0.12)"
-                    strokeWidth="0.6"
+                    strokeWidth="0.5"
                     strokeLinejoin="round" />
                 ))}
               </g>
@@ -265,7 +273,7 @@ export default function GlobalMapScene() {
                   />
                   {isActive && (
                     <text x={cx} y={cy - 12} textAnchor="middle" fill={isCurrent ? "#F1F5F9" : "#94A3B8"}
-                      fontSize="7" fontFamily="JetBrains Mono, monospace" opacity={isCurrent ? 0.9 : 0.3}>
+                      fontSize="9" fontFamily="JetBrains Mono, monospace" opacity={isCurrent ? 1 : 0.4}>
                       {event.year}
                     </text>
                   )}
@@ -282,11 +290,11 @@ export default function GlobalMapScene() {
               <span className="font-mono text-amber text-lg md:text-xl tracking-wider">
                 {sortedEvents[activeIndex].year}
               </span>
-              <span className="text-text-tertiary/30 mx-3">|</span>
+              <span className="text-text-tertiary/40 mx-3">|</span>
               <span className="font-serif text-text-primary text-lg md:text-xl">
                 {sortedEvents[activeIndex].nameCn}
               </span>
-              <p className="text-text-secondary/50 text-sm mt-2 italic">
+              <p className="text-text-secondary/60 text-sm mt-2 italic">
                 "{sortedEvents[activeIndex].hook}"
               </p>
             </div>

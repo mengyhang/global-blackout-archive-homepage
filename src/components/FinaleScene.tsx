@@ -132,22 +132,16 @@ export default function FinaleScene() {
           style={{ background: "radial-gradient(ellipse at 50% 60%, rgba(158,26,47,0.03) 0%, transparent 50%)" }} />
         <div className="fb-content h-full w-full flex items-center justify-center px-6">
           <div className="text-center max-w-3xl">
-            <div className="relative inline-block mb-12">
-              <div className="absolute -inset-3 rounded-full animate-rotate-halo opacity-20"
-                style={{
-                  background: "conic-gradient(from 0deg, transparent, rgba(158,26,47,0.3), transparent, rgba(245,158,11,0.2), transparent)",
-                }} />
-              <div className="fb-badge relative inline-flex items-center gap-3 px-6 py-2.5 rounded-full border border-sjtu-red/30 bg-sjtu-red/[0.03] opacity-0">
-                <div className="w-1.5 h-1.5 rounded-full bg-sjtu-red/60" />
-                <span className="font-serif text-[13px] tracking-[0.25em] text-sjtu-red/80">上海交通大学 · 建校130周年</span>
-                <div className="w-1.5 h-1.5 rounded-full bg-sjtu-red/60" />
-              </div>
+            <div className="fb-badge mb-12 inline-flex items-center gap-3 px-6 py-2.5 rounded-full border border-sjtu-red/30 bg-sjtu-red/[0.03] opacity-0">
+              <div className="w-1.5 h-1.5 rounded-full bg-sjtu-red/60" />
+              <span className="font-serif text-sm tracking-[0.2em] text-sjtu-red/80">上海交通大学 · 建校130周年</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-sjtu-red/60" />
             </div>
             <div className="space-y-2">
-              <p className="fb-text font-serif text-xl md:text-2xl lg:text-3xl text-text-primary/70 leading-relaxed opacity-0">
+              <p className="fb-text font-serif text-xl md:text-2xl lg:text-3xl text-text-primary/80 leading-relaxed opacity-0">
                 从<span className="font-mono text-amber mx-1">1896</span>到<span className="font-mono text-amber mx-1">2026</span>
               </p>
-              <p className="fb-text font-serif text-xl md:text-2xl lg:text-3xl text-text-primary/70 leading-relaxed opacity-0">
+              <p className="fb-text font-serif text-xl md:text-2xl lg:text-3xl text-text-primary/80 leading-relaxed opacity-0">
                 交大电气人始终站在守护光明的路上
               </p>
             </div>
@@ -174,9 +168,9 @@ export default function FinaleScene() {
                 className="archive-card group relative overflow-hidden rounded-lg bg-deep-surface/50 border border-white/[0.03] p-4 md:p-5 hover:border-amber/20 transition-all duration-300 opacity-0">
                 <div className="absolute inset-0 bg-amber/0 group-hover:bg-amber/[0.03] transition-colors duration-300" />
                 <div className="relative z-10">
-                  <span className="font-mono text-amber/40 text-[10px] tracking-wider">{event.year}</span>
-                  <h3 className="font-serif text-text-primary/80 text-sm mt-2 group-hover:text-amber/90 transition-colors duration-300 leading-snug">{event.nameCn}</h3>
-                  <p className="text-text-tertiary/40 text-[10px] mt-2 line-clamp-1">{event.location}</p>
+                  <span className="font-mono text-amber/50 text-xs tracking-wider">{event.year}</span>
+                  <h3 className="font-serif text-text-primary/90 text-sm mt-2 group-hover:text-amber transition-colors duration-300 leading-snug">{event.nameCn}</h3>
+                  <p className="text-text-tertiary/50 text-xs mt-2 line-clamp-1">{event.location}</p>
                 </div>
               </a>
             ))}
@@ -187,7 +181,7 @@ export default function FinaleScene() {
       {/* Footer */}
       <footer className="relative border-t border-white/[0.04] py-16 md:py-20 px-6 bg-deep-black">
         <div className="max-w-4xl mx-auto text-center space-y-5">
-          <p className="font-serif text-text-secondary/60 text-sm tracking-[0.08em]">电力系统安全分析课程 · 上海交通大学电气工程系</p>
+          <p className="font-serif text-text-secondary/60 text-sm tracking-[0.08em]">电力系统安全分析课程 · 上海交通大学电气工程学院</p>
           <p className="text-text-tertiary/40 text-xs tracking-wider">献礼上海交通大学建校130周年</p>
           <div className="pt-8">
             <div className="w-8 h-px bg-gradient-to-r from-transparent via-text-tertiary/20 to-transparent mx-auto mb-6" />

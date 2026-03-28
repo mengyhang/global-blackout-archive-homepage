@@ -104,15 +104,15 @@ export default function ActSection({ actInfo }: Props) {
         {/* 幕序号 */}
         <div className="act-number relative z-10 flex items-center gap-4 mb-6 opacity-0 origin-center">
           <div className="h-px w-8 bg-amber/30" />
-          <span className="font-mono text-[11px] text-amber/40 tracking-[0.4em] uppercase">Act {actInfo.act}</span>
+          <span className="font-mono text-xs text-amber/50 tracking-[0.3em] uppercase">Act {actInfo.act}</span>
           <div className="h-px w-8 bg-amber/30" />
         </div>
 
         {/* 标题 */}
         <div className="act-heading text-center mb-10 md:mb-14 relative z-10 opacity-0">
           <h2 className="act-title">{actInfo.title}</h2>
-          <p className="font-display text-text-tertiary/60 text-sm md:text-base mt-3 tracking-[0.12em]">{actInfo.subtitle}</p>
-          <p className={`mt-4 max-w-md mx-auto leading-relaxed ${isFinale ? "text-text-secondary/40 text-sm font-serif" : "text-text-secondary/30 text-xs"}`}>
+          <p className="font-display text-text-tertiary/70 text-sm md:text-base mt-3 tracking-[0.12em]">{actInfo.subtitle}</p>
+          <p className={`mt-4 max-w-md mx-auto leading-relaxed ${isFinale ? "text-text-secondary/50 text-sm font-serif" : "text-text-secondary/40 text-sm"}`}>
             {actInfo.theme}
           </p>
         </div>
@@ -134,7 +134,7 @@ export default function ActSection({ actInfo }: Props) {
           <div className="relative z-10 mt-10 md:mt-14 w-full max-w-xl mx-auto text-center">
             <div className="sjtu-line h-px mx-auto origin-center"
               style={{ background: "linear-gradient(90deg, transparent, #9E1A2F, transparent)", maxWidth: "160px" }} />
-            <p className="sjtu-text sjtu-whisper mt-4 font-serif text-[13px] opacity-0">{actInfo.sjtuWhisper}</p>
+            <p className="sjtu-text sjtu-whisper mt-4 font-serif text-sm opacity-0">{actInfo.sjtuWhisper}</p>
           </div>
         )}
       </div>

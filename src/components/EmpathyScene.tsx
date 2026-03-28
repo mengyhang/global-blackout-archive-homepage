@@ -87,7 +87,7 @@ export default function EmpathyScene() {
               <span className="text-amber font-bold mx-1">数十亿</span>
               盏灯在亮着
             </p>
-            <p className="font-sans text-sm text-text-tertiary/50 mt-4 tracking-wider">
+            <p className="font-sans text-sm text-text-tertiary/60 mt-4 tracking-wider">
               我们习以为常，从未多想
             </p>
           </div>
@@ -103,27 +103,25 @@ export default function EmpathyScene() {
         {/* 阶段C: 黑暗中的数字 */}
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-10 md:gap-14 px-6">
           <div className="empathy-stat-1 text-center opacity-0">
-            <p className="text-text-secondary/60 text-xs md:text-sm mb-3 tracking-[0.15em]">
+            <p className="text-text-secondary/70 text-xs md:text-sm mb-3 tracking-[0.15em]">
               在过去
             </p>
             <div className="stat-number">60</div>
-            <p className="text-text-secondary/40 text-xs mt-1 tracking-wider">年里</p>
+            <p className="text-text-secondary/50 text-xs mt-1 tracking-wider">年里</p>
           </div>
           <div className="empathy-stat-2 text-center opacity-0">
-            <p className="text-text-secondary/60 text-xs md:text-sm mb-3 tracking-[0.15em]">
+            <p className="text-text-secondary/70 text-xs md:text-sm mb-3 tracking-[0.15em]">
               这样的黑暗，降临过
             </p>
             <div className="stat-number">13</div>
-            <p className="text-text-secondary/40 text-xs mt-1 tracking-wider">次</p>
+            <p className="text-text-secondary/50 text-xs mt-1 tracking-wider">次</p>
           </div>
           <div className="empathy-stat-3 text-center opacity-0">
-            <p className="text-text-secondary/60 text-xs md:text-sm mb-3 tracking-[0.15em]">
+            <p className="text-text-secondary/70 text-xs md:text-sm mb-3 tracking-[0.15em]">
               影响了
             </p>
-            <div className="font-mono text-4xl md:text-6xl font-bold text-amber" style={{ textShadow: "0 0 40px rgba(245,158,11,0.25)" }}>
-              数十亿
-            </div>
-            <p className="text-text-secondary/40 text-xs mt-1 tracking-wider">人的生命</p>
+            <div className="stat-number">数十亿</div>
+            <p className="text-text-secondary/50 text-xs mt-1 tracking-wider">人的生命</p>
           </div>
         </div>
       </div>
