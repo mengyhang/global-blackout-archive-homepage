@@ -120,6 +120,7 @@ export default function GlobalMapScene() {
     if (!container) return;
 
     const gsapCtx = gsap.context(() => {
+      // 只创建一个 ScrollTrigger（不要在同一元素上创建多个）
       ScrollTrigger.create({
         trigger: container,
         start: "top top",
@@ -127,8 +128,11 @@ export default function GlobalMapScene() {
         scrub: 1.5,
         pin: true,
         pinSpacing: true,
+        refreshPriority: 80,
         onUpdate: (self) => {
           const p = self.progress;
+
+          // 事件激活逻辑
           if (p < 0.65) {
             setPhase("map");
             const eventProgress = p / 0.65;
@@ -139,34 +143,20 @@ export default function GlobalMapScene() {
           } else {
             setPhase("exit");
           }
+
+          // 结尾文字透明度（合并到同一个 onUpdate 中）
+          const el = container.querySelector<HTMLElement>(".map-outro-text");
+          if (el) {
+            if (p > 0.65 && p < 0.85) {
+              el.style.opacity = String(Math.min(1, (p - 0.65) / 0.1));
+            } else if (p >= 0.85) {
+              el.style.opacity = String(Math.max(0, 1 - (p - 0.85) / 0.15));
+            } else {
+              el.style.opacity = "0";
+            }
+          }
         },
       });
-
-      gsap.fromTo(
-        container.querySelector(".map-outro-text"),
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1, y: 0,
-          scrollTrigger: {
-            trigger: container,
-            start: "top top",
-            end: "+=400%",
-            scrub: 1.5,
-            onUpdate: (self) => {
-              const el = container.querySelector<HTMLElement>(".map-outro-text");
-              if (!el) return;
-              const p = self.progress;
-              if (p > 0.65 && p < 0.85) {
-                el.style.opacity = String((p - 0.65) / 0.1);
-              } else if (p >= 0.85) {
-                el.style.opacity = String(Math.max(0, 1 - (p - 0.85) / 0.15));
-              } else {
-                el.style.opacity = "0";
-              }
-            },
-          },
-        }
-      );
     }, container);
 
     return () => gsapCtx.revert();

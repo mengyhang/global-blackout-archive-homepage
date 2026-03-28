@@ -107,6 +107,7 @@ export default function HeroScene() {
           scrub: 1.5,
           pin: true,
           pinSpacing: true,
+          refreshPriority: 100,
         },
       });
 

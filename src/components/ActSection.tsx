@@ -47,6 +47,7 @@ export default function ActSection({ actInfo }: Props) {
           scrub: 1.5,
           pin: true,
           pinSpacing: true,
+          refreshPriority: 70 - actInfo.act * 5, // Act1=65, Act2=60, Act3=55, Act4=50, Act5=45
         },
       });
 

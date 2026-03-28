@@ -28,7 +28,7 @@ export default function FinaleScene() {
       const sA = container.querySelector(".finale-a") as HTMLElement;
       if (sA) {
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: sA, start: "top top", end: "+=200%", scrub: 1.5, pin: true, pinSpacing: true },
+          scrollTrigger: { trigger: sA, start: "top top", end: "+=200%", scrub: 1.5, pin: true, pinSpacing: true, refreshPriority: 30 },
         });
         tl.fromTo(sA.querySelector(".fl-top"), { scaleX: 0 }, { scaleX: 1, duration: 0.06 }, 0.02);
         tl.fromTo(sA.querySelector(".ft-1a"), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.08 }, 0.06);
@@ -49,6 +49,7 @@ export default function FinaleScene() {
             scrub: 1.5,
             pin: true,
             pinSpacing: true,
+            refreshPriority: 20,
             onUpdate: (self) => {
               if (self.progress > 0.35 && self.progress < 0.75) {
                 const usEl = sB.querySelector(".fb-us2");
@@ -89,7 +90,7 @@ export default function FinaleScene() {
       const sC = container.querySelector(".finale-c") as HTMLElement;
       if (sC) {
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: sC, start: "top top", end: "+=180%", scrub: 1.5, pin: true, pinSpacing: true },
+          scrollTrigger: { trigger: sC, start: "top top", end: "+=180%", scrub: 1.5, pin: true, pinSpacing: true, refreshPriority: 10 },
         });
         tl.fromTo(sC.querySelector(".fc-title"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.06 }, 0.02);
         const cards = sC.querySelectorAll(".archive-card");

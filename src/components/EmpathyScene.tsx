@@ -30,6 +30,7 @@ export default function EmpathyScene() {
           scrub: 1.5,
           pin: true,
           pinSpacing: true,
+          refreshPriority: 90,
         },
       });
 
