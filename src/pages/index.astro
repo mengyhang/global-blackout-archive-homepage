@@ -1,40 +1,8 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import ScrollRefresh from "../components/ScrollRefresh";
-import ScrollProgress from "../components/ScrollProgress";
-import HeroScene from "../components/HeroScene";
-import EmpathyScene from "../components/EmpathyScene";
-import GlobalMapScene from "../components/GlobalMapScene";
-import FiveActsScene from "../components/FiveActsScene";
-import FinaleScene from "../components/FinaleScene";
-import AmbientParticles from "../components/AmbientParticles";
+import HomePage from "../components/HomePage";
 ---
 
 <MainLayout>
-  {/* 全局 ScrollTrigger 刷新（修复多 pin 排序） */}
-  <ScrollRefresh client:load />
-
-  {/* 滚动进度指示器 */}
-  <ScrollProgress client:load />
-
-  {/* 环境浮粒 */}
-  <AmbientParticles client:load />
-
-  {/* 噪点纹理 */}
-  <div class="noise-overlay" aria-hidden="true"></div>
-
-  {/* Scene 0: SJTU 献礼 + Hero 光点 + Slogan */}
-  <HeroScene client:load />
-
-  {/* Scene 1: 共情 — 停电体验 */}
-  <EmpathyScene client:load />
-
-  {/* Scene 2: 全球停电地图 */}
-  <GlobalMapScene client:load />
-
-  {/* Scene 3-7: 五幕故事导览 */}
-  <FiveActsScene client:load />
-
-  {/* Scene 8: 尾声 + Footer */}
-  <FinaleScene client:load />
+  <HomePage client:load />
 </MainLayout>
