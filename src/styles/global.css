@@ -4,9 +4,8 @@
 
 @layer base {
   html {
-    background-color: #050508;
-    color: #f1f5f9;
-    /* 禁用 smooth scroll — GSAP ScrollTrigger 自己控制 */
+    background-color: #000000;
+    color: #e2e8f0;
     scroll-behavior: auto;
   }
 
@@ -15,11 +14,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    background: radial-gradient(ellipse at center, #0a0a0f 0%, #000000 100%);
   }
 
   ::selection {
-    background-color: rgba(245, 158, 11, 0.25);
-    color: #f1f5f9;
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #e2e8f0;
   }
 
   /* 滚动条 */
