@@ -5,29 +5,29 @@ export default {
     extend: {
       colors: {
         deep: {
-          black: "#050508",
-          navy: "#0a0e1a",
-          surface: "#111318",
+          black: "#000000",
+          navy: "#0a0a0f",
+          surface: "#0f0f14",
         },
         amber: {
-          glow: "rgba(245,158,11,0.15)",
-          DEFAULT: "#F59E0B",
-          warm: "#FBBF24",
+          glow: "rgba(245,158,11,0.1)",
+          DEFAULT: "#D97706",
+          warm: "#F59E0B",
         },
         electric: {
-          blue: "#3B82F6",
-          cyan: "#06B6D4",
+          blue: "#2563EB",
+          cyan: "#0891B2",
         },
         sjtu: {
-          red: "#9E1A2F",
+          red: "#8B1538",
         },
         text: {
-          primary: "#F1F5F9",
+          primary: "#E2E8F0",
           secondary: "#94A3B8",
           tertiary: "#475569",
         },
         alert: {
-          red: "#EF4444",
+          red: "#DC2626",
         },
       },
       fontFamily: {
